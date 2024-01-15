@@ -3,5 +3,7 @@
   <component name="Black">
     <option name="executionMode" value="BINARY" />
     <option name="pathToExecutable" value="$USER_HOME$/miniconda3/bin/black" />
+    <option name="sdkName" value="Python 3.9" />
   </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="mpk" project-jdk-type="Python SDK" />
 </project>
