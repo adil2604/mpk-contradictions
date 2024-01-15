@@ -11,4 +11,5 @@ pandas
 PyMuPDF
 chromadb
 pysqlite3-binary
+pypdf
 #-e .
