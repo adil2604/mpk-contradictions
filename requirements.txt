@@ -9,5 +9,5 @@ tiktoken
 openai
 pandas
 PyMuPDF
-
+chromadb
 #-e .
