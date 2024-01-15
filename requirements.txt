@@ -10,4 +10,5 @@ openai
 pandas
 PyMuPDF
 chromadb
+sqlite3
 #-e .
