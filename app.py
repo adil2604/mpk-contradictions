@@ -16,7 +16,7 @@ from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 from langchain import PromptTemplate
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 # side bar contents
 with st.sidebar:
