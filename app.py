@@ -41,7 +41,7 @@ def main():
 
     # upload a PDF file
     with tab1:
-        st.subheader("Добавить новые знания")
+        st.subheader("Загрузите PDF файл, чтобы сравнить его и найти противоречия")
         pdf = st.file_uploader("Загрузите PDF файл", type="pdf")
         if pdf is not None:
             vectordb = Chroma(persist_directory="./data", embedding_function=OpenAIEmbeddings())
