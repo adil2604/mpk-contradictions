@@ -16,11 +16,11 @@ from langchain.chains import RetrievalQA
 from langchain.llms import OpenAI
 from langchain import PromptTemplate
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = st.secrets['OPENAI_KEY']
 
 # side bar contents
 with st.sidebar:
-    st.title('🤗💬 Smart Compare')
+    st.title('🤗💬 Smart Search')
     st.markdown("""
     ## Краткая информация
     
@@ -36,7 +36,7 @@ load_dotenv()
 
 
 def main():
-    st.header("Smart Compare 💬")
+    st.header("Smart Search 💬")
     tab1, tab2 = st.tabs(["Умное сравнение", "Загрузить новые знания"])
 
     # upload a PDF file
