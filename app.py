@@ -78,7 +78,7 @@ def main():
             columns = ['Text', 'Source Documents']
             df = pd.DataFrame(columns=columns)
             for t in texts:
-                if len(t) > 10:
+                if len(t) > 20:
                     # we can now execute queries against our Q&A chain
                     print(qa_chain.get_prompts(PROMPT))
                     result = qa_chain({'query': t})
