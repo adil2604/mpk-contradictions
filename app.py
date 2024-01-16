@@ -20,13 +20,13 @@ os.environ["OPENAI_API_KEY"] = "sk-wtv3nOqtb5gWeyhHJe2IT3BlbkFJ8YoGyv5GnijCsnUIc
 
 # side bar contents
 with st.sidebar:
-    st.title('🤗💬 Contradicton Finder by AI')
+    st.title('🤗💬 Smart Compare')
     st.markdown("""
-    ## About
-    This app is an LLM-powered finder built using:
+    ## Краткая информация
+    
     - [Streamlit](https://streamlit.io/)
     - [Langchain](https://python.langchian.com/)
-    - [OpenAI](https://platform.openai.com/docs/models) LLM model
+    - Локальный ИИ на базе LLama70
                 
     """)
     add_vertical_space(1)
@@ -36,13 +36,13 @@ load_dotenv()
 
 
 def main():
-    st.header("Compare your documents 💬")
-    tab1, tab2 = st.tabs(["Compare", "Update Knowledge"])
+    st.header("Smart Compare 💬")
+    tab1, tab2 = st.tabs(["Умное сравнение", "Загрузить новые знания"])
 
     # upload a PDF file
     with tab1:
-        st.subheader("Load your document to compare with knowledge")
-        pdf = st.file_uploader("Upload your PDF", type="pdf")
+        st.subheader("Добавить новые знания")
+        pdf = st.file_uploader("Загрузите PDF файл", type="pdf")
         if pdf is not None:
             vectordb = Chroma(persist_directory="./data", embedding_function=OpenAIEmbeddings())
 
@@ -94,12 +94,12 @@ def main():
                 st.header('Найденные противоречия', divider='violet')
                 st.dataframe(df)
             else:
-                st.write("No contradictions found")
+                st.write("Противоречий не найдено")
 
     with tab2:
         new_pdf = st.file_uploader("Update your knowledge", type="pdf")
         if new_pdf is not None:
-            data_load_state = st.text('Loading data...')
+            data_load_state = st.text('Загрузка...')
 
             temp_file = "./temp.pdf"
             with open(temp_file, "wb") as file:
@@ -124,7 +124,7 @@ def main():
                 persist_directory='./data'
             )
             vectordb.persist()
-            data_load_state.text('Loading data...done!')
+            data_load_state.text('Загрузка завершена!')
     # st.write(pdf)
 
 
