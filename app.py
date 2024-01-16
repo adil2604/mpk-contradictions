@@ -1,11 +1,12 @@
 __import__('pysqlite3')
 import sys
+
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import streamlit as st
 import os
 from streamlit_extras.add_vertical_space import add_vertical_space
 from langchain.document_loaders import PyPDFLoader
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 from langchain.embeddings import OpenAIEmbeddings
 import pandas as pd
@@ -28,7 +29,7 @@ with st.sidebar:
     - [OpenAI](https://platform.openai.com/docs/models) LLM model
                 
     """)
-    add_vertical_space(3)
+    add_vertical_space(1)
     st.write("Made by MPK")
 
 load_dotenv()
@@ -53,19 +54,24 @@ def main():
                 text = ""
                 for page in doc:
                     text += page.get_text()
-            template = """
-            Сompare two texts, if the texts meaning do not contradict each other print only "0", otherwise print "1"
-            Text 1: {context}
 
-            Text 2: {question}
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=0, keep_separator=False, separators=['.','\n'] )
+            documents = text_splitter.split_text(text)
+            template = """
+             Your task is to compare these texts assess compliance. 
+             When you find a discrepancy or contradictions, you respond only "1", else "0
+            Text 1: " {context} "
+
+            Text 2: " {question} "
             Answer: 
             """
             PROMPT = PromptTemplate(template=template, input_variables=['question', 'context'])
             qa_chain = RetrievalQA.from_chain_type(
-                llm=OpenAI(),
-                retriever=vectordb.as_retriever(search_kwargs={'k': 1}),
+                llm=OpenAI(model_name="gpt-4-1106-preview", max_tokens=1000, temperature=0, top_p=1.0),
+                retriever=vectordb.as_retriever(search_kwargs={"k":1}),
                 chain_type_kwargs={"prompt": PROMPT},
-                return_source_documents=True
+                return_source_documents=True,
+                verbose=True
             )
 
             texts = text.split('.')
@@ -74,17 +80,18 @@ def main():
             for t in texts:
                 if len(t) > 10:
                     # we can now execute queries against our Q&A chain
+                    print(qa_chain.get_prompts(PROMPT))
                     result = qa_chain({'query': t})
                     if result['result'] == '1':
                         if len(result['source_documents']) > 0:
-                            source = result['source_documents'][0].page_content
+                            source = str(result['source_documents'][0].page_content)
                         else:
                             source = ""
                         df = pd.concat([df, pd.DataFrame([
                             [result['query'], source]], columns=columns)
                                         ], ignore_index=True)
             if len(df) > 0:
-                st.header('Найденные не состыковки', divider='violet')
+                st.header('Найденные противоречия', divider='violet')
                 st.dataframe(df)
             else:
                 st.write("No contradictions found")
@@ -104,8 +111,9 @@ def main():
             # we split the data into chunks of 1,000 characters, with an overlap
             # of 200 characters between the chunks, which helps to give better results
             # and contain the context of the information between chunks
-            text_splitter = CharacterTextSplitter(chunk_size=150, chunk_overlap=50)
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=0, keep_separator=False, separators=['.'] )
             documents = text_splitter.split_documents(documents)
+            print(documents)
 
             # we create our vectorDB, using the OpenAIEmbeddings tranformer to create
             # embeddings from our text chunks. We set all the db information to be stored
@@ -118,9 +126,6 @@ def main():
             vectordb.persist()
             data_load_state.text('Loading data...done!')
     # st.write(pdf)
-
-
-
 
 
 if __name__ == "__main__":

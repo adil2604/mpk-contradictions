@@ -12,4 +12,5 @@ PyMuPDF
 chromadb
 pysqlite3-binary
 pypdf
+langchain_experimental
 #-e .
